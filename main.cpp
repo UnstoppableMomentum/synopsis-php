@@ -98,7 +98,7 @@ public:
         m_PtrDataAccessor.reset(new synopsis::CDataAccessorPostgr);
         std::cerr << "open params.size():" << params.size() << std::endl;
         if(0 == params.size()) {
-            m_PtrDataAccessor->GetConnection().Open("host=127.0.0.1 port=5432 dbname=dao user=postgres password=postgres");
+            m_PtrDataAccessor->GetConnection().Open("host=127.0.0.1 port=5432 dbname=dao user=dao password=dao");
             std::cerr << "open anonymous" << std::endl;
         }
     }
