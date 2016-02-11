@@ -148,7 +148,7 @@ public:
         }
     }
 
-    void insert(Php::Parameters &params) {
+    Php::Value insert(Php::Parameters &params) {
         std::cerr << "insert params.size():" << params.size() << std::endl;
         if(params.size() > 1) {
             if(Php::Type::String == params.at(0).type()){
@@ -160,8 +160,17 @@ public:
                     if(pBase) {
                         const CRowPhpBridge *pRowPhpBridge = dynamic_cast<const CRowPhpBridge*>(pBase);
                         std::cerr << "pRowPhpBridge:" << pRowPhpBridge << std::endl;
-                        if(pRowPhpBridge)
+                        if(pRowPhpBridge) {
+                            //std::cerr << "qqqq:" << pRowPhpBridge << std::endl;
                             m_PtrDataAccessor->Insert(sTableName, pRowPhpBridge->daoRow());
+                            std::cerr << "m_PtrDataAccessor->Insert" << std::endl;
+                            unsigned long ulLastId = m_PtrDataAccessor->GetLastIsertedRowId(sTableName, "id");
+                            std::cerr << "ulLastId:" << ulLastId << std::endl;
+                            //SYNOPSIS_DBG_ERR_LOG("[%s:%d] ulLastId:%d", __PRETTY_FUNCTION__, __LINE__, ulLastId);
+                            //Php::Value
+                            Php::Value phpRes = (int64_t) ulLastId;
+                            return phpRes;
+                        }
                     }
                 } else {
                     std::cerr << "wrong type of param[1]:" << params.at(1).type() << std::endl;
@@ -170,6 +179,7 @@ public:
                 std::cerr << "wrong type of param[0]:" << params.at(0).type() << std::endl;
             }
         }
+        return Php::Value(-1);
     }
 
     void read(Php::Parameters &params) {
