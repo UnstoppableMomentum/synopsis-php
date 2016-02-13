@@ -162,14 +162,21 @@ public:
                         std::cerr << "pRowPhpBridge:" << pRowPhpBridge << std::endl;
                         if(pRowPhpBridge) {
                             //std::cerr << "qqqq:" << pRowPhpBridge << std::endl;
-                            m_PtrDataAccessor->Insert(sTableName, pRowPhpBridge->daoRow());
+                            const synopsis::CRow& row = pRowPhpBridge->daoRow();
+                            m_PtrDataAccessor->Insert(sTableName, row);
                             std::cerr << "m_PtrDataAccessor->Insert" << std::endl;
-                            unsigned long ulLastId = m_PtrDataAccessor->GetLastIsertedRowId(sTableName, "id");
-                            std::cerr << "ulLastId:" << ulLastId << std::endl;
-                            //SYNOPSIS_DBG_ERR_LOG("[%s:%d] ulLastId:%d", __PRETTY_FUNCTION__, __LINE__, ulLastId);
-                            //Php::Value
-                            Php::Value phpRes = (int64_t) ulLastId;
-                            return phpRes;
+                            const std::string& sKeyColumnName = row.GetKeyColumnName();
+                            if(!sKeyColumnName.empty()) {
+                                unsigned long ulLastId = m_PtrDataAccessor->GetLastIsertedRowId(sTableName, sKeyColumnName);
+                                std::cerr << "ulLastId:" << ulLastId << std::endl;
+                                //SYNOPSIS_DBG_ERR_LOG("[%s:%d] ulLastId:%d", __PRETTY_FUNCTION__, __LINE__, ulLastId);
+                                //Php::Value
+                                Php::Value phpRes = (int64_t) ulLastId;
+                                return phpRes;
+                            } else {
+                                Php::Value phpRes = (int64_t) 0;
+                                return phpRes;
+                            }
                         }
                     }
                 } else {
@@ -355,6 +362,8 @@ PHPCPP_EXPORT void *get_module() {
     Php::Class<CRowPhpBridge> rowPhpBridge("CRow");
     rowPhpBridge.method("addColumn", &CRowPhpBridge::addColumn);
     rowPhpBridge.method("getColumnValue", &CRowPhpBridge::getColumnValue);
+    rowPhpBridge.method("setKeyColumnName", &CRowPhpBridge::setKeyColumnName);
+    rowPhpBridge.method("getKeyColumnName", &CRowPhpBridge::getKeyColumnName);
     myExtension.add(std::move(rowPhpBridge));
 
     Php::Class<CRowsPhpBridge> rowsPhpBridge("CRows");

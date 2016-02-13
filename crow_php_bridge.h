@@ -11,9 +11,11 @@ public:
     CRowPhpBridge(synopsis::CRow& row);
 
     virtual ~CRowPhpBridge();
-    void addColumn(Php::Parameters &params);
 
+    void addColumn(Php::Parameters &params);
     Php::Value getColumnValue(Php::Parameters &params);
+    void setKeyColumnName(Php::Parameters &params);
+    Php::Value getKeyColumnName() const;
 
     synopsis::CRow& daoRow() { return m_row; }
     const synopsis::CRow& daoRow() const { return m_row; }

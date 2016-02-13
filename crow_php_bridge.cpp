@@ -48,3 +48,31 @@ Php::Value CRowPhpBridge::getColumnValue(Php::Parameters &params)
     }
     return Php::Value();
 }
+
+void CRowPhpBridge::setKeyColumnName(Php::Parameters &params)
+{
+    if(1 == params.size()) {
+        if(params.at(0).isString()) {
+            SYNOPSIS_DBG_ERR_LOG("[%s] params.at(0):%s\n",
+                                 __PRETTY_FUNCTION__, params.at(0).stringValue().c_str());
+            std::string sKeyColumnName = params.at(0).stringValue();
+            m_row.SetKeyColumnName(sKeyColumnName);
+        } else {
+            SYNOPSIS_ERR_LOG("Invalid type of parameter[0]:%d\n", params.at(0).type());
+        }
+    } else {
+        SYNOPSIS_ERR_LOG("Invalid number of parameters:%zu\n", params.size());
+    }
+}
+
+Php::Value CRowPhpBridge::getKeyColumnName() const
+{
+    const std::string& sKeyColumnName = m_row.GetKeyColumnName();
+    SYNOPSIS_DBG_ERR_LOG("[%s] sKeyColumnName:%s\n",
+                         __PRETTY_FUNCTION__, sKeyColumnName.c_str());
+    Php::Value phpRes = sKeyColumnName;
+    return phpRes;
+}
+
+
+
